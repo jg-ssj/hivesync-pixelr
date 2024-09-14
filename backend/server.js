@@ -1,4 +1,3 @@
-
 import dotenv from 'dotenv'; 
 import express from 'express';
 import cors from 'cors';
@@ -9,7 +8,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://hivesync-pixelr.vercel.app', 
+}));
 
 app.get('/api/get-token', (req, res) => {
   try {
@@ -21,4 +22,6 @@ app.get('/api/get-token', (req, res) => {
   }
 });
 
-export default app;
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en el puerto ${PORT}`);
+});
