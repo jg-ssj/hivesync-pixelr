@@ -7,9 +7,14 @@ export default function Component() {
   const [editor, setEditor] = useState<Editor | null>(null);
   const [showModal, setShowModal] = useState(false);
 
+  const API_URL =
+    process.env.NODE_ENV === 'production'
+      ? 'https://hivesync-pixelr.vercel.app/api/get-token'
+      : 'http://localhost:5000/api/get-token';
+
   const fetchJwtToken = async () => {
     try {
-      const response = await fetch('https://hivesync-pixelr.vercel.app/api/get-token'); // URL de producción
+      const response = await fetch(API_URL); 
       const data = await response.json();
       return data.token;
     } catch (error) {

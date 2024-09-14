@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: 'https://hivesync-pixelr.vercel.app', 
+  origin: process.env.CORS_ORIGIN || 'https://hivesync-pixelr.vercel.app',
 }));
 
 app.get('/api/get-token', (req, res) => {
