@@ -11,7 +11,11 @@ export default function Component() {
     process.env.NODE_ENV === 'production'
       ? 'https://hivesync-pixelr.vercel.app/api/get-token'
       : 'http://localhost:5000/api/get-token';
-
+    useEffect(()=>
+  {
+    console.log("holA",API_URL)    
+    console.log("holka",process.env.NODE_ENV)
+  },[])
   const fetchJwtToken = async () => {
     try {
       console.log('Fetching JWT token from:', API_URL);
@@ -81,6 +85,11 @@ export default function Component() {
         {/* Informative text */}
         <p className="text-white text-lg sm:text-xl md:text-2xl mb-8 text-center font-semibold">
           Arrastra una imagen para empezar a editar
+        </p>
+        
+        {/* Informative text */}
+        <p className="text-white text-lg sm:text-xl md:text-2xl mb-8 text-center font-semibold">
+          {API_URL}
         </p>
 
         {/* Adjustable container for iframe */}
