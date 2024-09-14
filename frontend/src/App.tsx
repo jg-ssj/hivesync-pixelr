@@ -13,8 +13,8 @@ export default function Component() {
       : 'http://localhost:5000/api/get-token';
 
   useEffect(() => {
-    console.log('holA', API_URL);
-    console.log('holka', process.env.NODE_ENV);
+    console.log('API URL:', API_URL);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
   }, []);
 
   const fetchJwtToken = async () => {
@@ -50,6 +50,30 @@ export default function Component() {
     };
 
     initializeEditor();
+
+    // Listener to handle messages from the iframe
+    const handleFileSave = (event) => {
+      // Check the origin to make sure it's from Pixlr
+      if (event.origin !== 'https://pixlr.com') return;
+
+      // Handle the data sent from the iframe
+      const { type, content, filename } = event.data;
+
+      if (type === 'saveFile') {
+        const blob = new Blob([content], { type: 'application/octet-stream' }); // Adjust MIME type as needed
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename || 'file.png';
+        link.click();
+      }
+    };
+
+    window.addEventListener('message', handleFileSave);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('message', handleFileSave);
+    };
   }, []);
 
   return (
@@ -101,7 +125,7 @@ export default function Component() {
             className="w-full h-[600px] sm:h-[700px] lg:h-[800px] overflow-scroll"
             title="Pixlr Editor"
             allow="fullscreen; clipboard-write; encrypted-media;"
-            sandbox="allow-scripts allow-same-origin allow-downloads" // Se agregó 'allow-downloads' para permitir descargas
+            sandbox="allow-scripts allow-same-origin allow-downloads"
             onLoad={() => console.log('Iframe loaded successfully')}
             style={{ overflow: 'auto' }}
           ></iframe>
