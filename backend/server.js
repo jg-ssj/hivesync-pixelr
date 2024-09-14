@@ -14,7 +14,7 @@ app.get('/api/get-token', (req, res) => {
   try {
     console.log('Request received for token generation');
     const token = generateJwtToken();
-    res.json({ token });
+    res.send(token); // Envía el token directamente sin envolver
     console.log('Token sent successfully');
   } catch (error) {
     console.error('Error al generar el token:', error);

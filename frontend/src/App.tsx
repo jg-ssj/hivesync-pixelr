@@ -16,34 +16,38 @@ export default function Component() {
     console.log("holA",API_URL)    
     console.log("holka",process.env.NODE_ENV)
   },[])
+
   const fetchJwtToken = async () => {
     try {
       console.log('Fetching JWT token from:', API_URL);
-      const response = await fetch(API_URL); 
+      const response = await fetch(API_URL);
       if (!response.ok) {
         throw new Error(`Server responded with status ${response.status}`);
       }
-      const data = await response.json();
-      console.log('Received JWT token:', data.token);
-      return data.token;
+      const token = await response.text(); // Leer el texto directamente, ya que es el token en texto plano
+      console.log('Received JWT token:', token);
+      return token; // Devuelve el token directamente
     } catch (error) {
       console.error('Error al obtener el token:', error);
     }
   };
-
   useEffect(() => {
     const initializeEditor = async () => {
       const token = await fetchJwtToken();
       if (token && iframeRef.current) {
         try {
+          console.log('Attempting to connect Pixlr Editor with token:', token);
           const connectedEditor = await Editor.connect(token, iframeRef.current);
           setEditor(connectedEditor);
+          console.log('Successfully connected to Pixlr Editor');
         } catch (error) {
           console.error('Error connecting to Pixlr Editor:', error);
         }
+      } else {
+        console.log('Token not available or iframe not found');
       }
     };
-
+  
     initializeEditor();
   }, []);
 
@@ -87,11 +91,6 @@ export default function Component() {
           Arrastra una imagen para empezar a editar
         </p>
         
-        {/* Informative text */}
-        <p className="text-white text-lg sm:text-xl md:text-2xl mb-8 text-center font-semibold">
-          {API_URL}
-        </p>
-
         {/* Adjustable container for iframe */}
         <div className="w-full bg-[#2E2934] rounded-lg p-1 shadow-lg overflow-hidden">
           <iframe
