@@ -11,15 +11,16 @@ export default function Component() {
     process.env.NODE_ENV === 'production'
       ? 'https://hivesync-pixelr.vercel.app/api/get-token'
       : 'http://localhost:5000/api/get-token';
-    useEffect(()=>
-  {
-    console.log("holA",API_URL)    
-    console.log("holka",process.env.NODE_ENV)
-  },[])
+
+  useEffect(() => {
+    console.log('API URL:', API_URL);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+  }, []);
+
   const fetchJwtToken = async () => {
     try {
       console.log('Fetching JWT token from:', API_URL);
-      const response = await fetch(API_URL); 
+      const response = await fetch(API_URL);
       if (!response.ok) {
         throw new Error(`Server responded with status ${response.status}`);
       }
@@ -36,11 +37,15 @@ export default function Component() {
       const token = await fetchJwtToken();
       if (token && iframeRef.current) {
         try {
+          console.log('Attempting to connect Pixlr Editor with token:', token);
           const connectedEditor = await Editor.connect(token, iframeRef.current);
           setEditor(connectedEditor);
+          console.log('Successfully connected to Pixlr Editor');
         } catch (error) {
           console.error('Error connecting to Pixlr Editor:', error);
         }
+      } else {
+        console.log('Token not available or iframe not found');
       }
     };
 
@@ -86,11 +91,6 @@ export default function Component() {
         <p className="text-white text-lg sm:text-xl md:text-2xl mb-8 text-center font-semibold">
           Arrastra una imagen para empezar a editar
         </p>
-        
-        {/* Informative text */}
-        <p className="text-white text-lg sm:text-xl md:text-2xl mb-8 text-center font-semibold">
-          {API_URL}
-        </p>
 
         {/* Adjustable container for iframe */}
         <div className="w-full bg-[#2E2934] rounded-lg p-1 shadow-lg overflow-hidden">
@@ -100,6 +100,9 @@ export default function Component() {
             src="about:blank"
             className="w-full h-[600px] sm:h-[700px] lg:h-[800px] overflow-scroll"
             title="Pixlr Editor"
+            allow="fullscreen; clipboard-write; encrypted-media;" // Permissions for the iframe
+            sandbox="allow-scripts allow-same-origin" // Sandbox settings for iframe security
+            onLoad={() => console.log('Iframe loaded successfully')}
             style={{ overflow: 'auto' }}
           ></iframe>
         </div>
