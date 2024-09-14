@@ -11,11 +11,11 @@ export default function Component() {
     process.env.NODE_ENV === 'production'
       ? 'https://hivesync-pixelr.vercel.app/api/get-token'
       : 'http://localhost:5000/api/get-token';
-    useEffect(()=>
-  {
-    console.log("holA",API_URL)    
-    console.log("holka",process.env.NODE_ENV)
-  },[])
+
+  useEffect(() => {
+    console.log('API URL:', API_URL);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+  }, []);
 
   const fetchJwtToken = async () => {
     try {
@@ -24,13 +24,14 @@ export default function Component() {
       if (!response.ok) {
         throw new Error(`Server responded with status ${response.status}`);
       }
-      const token = await response.text(); // Leer el texto directamente, ya que es el token en texto plano
+      const token = await response.text();
       console.log('Received JWT token:', token);
-      return token; // Devuelve el token directamente
+      return token;
     } catch (error) {
       console.error('Error al obtener el token:', error);
     }
   };
+
   useEffect(() => {
     const initializeEditor = async () => {
       const token = await fetchJwtToken();
@@ -47,8 +48,30 @@ export default function Component() {
         console.log('Token not available or iframe not found');
       }
     };
-  
+
     initializeEditor();
+
+    // Listener to handle messages from the iframe
+    window.addEventListener('message', (event) => {
+      // Check the origin to make sure it's from Pixlr
+      if (event.origin !== 'https://pixlr.com') return;
+
+      // Handle the data sent from the iframe
+      const { type, content, filename } = event.data;
+
+      if (type === 'saveFile') {
+        const blob = new Blob([content], { type: 'application/pdf' }); // Adjust MIME type as needed
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename || 'file.pdf';
+        link.click();
+      }
+    });
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('message', () => {});
+    };
   }, []);
 
   return (
@@ -90,7 +113,7 @@ export default function Component() {
         <p className="text-white text-lg sm:text-xl md:text-2xl mb-8 text-center font-semibold">
           Arrastra una imagen para empezar a editar
         </p>
-        
+
         {/* Adjustable container for iframe */}
         <div className="w-full bg-[#2E2934] rounded-lg p-1 shadow-lg overflow-hidden">
           <iframe
@@ -99,6 +122,9 @@ export default function Component() {
             src="https://pixlr.com/editor"
             className="w-full h-[600px] sm:h-[700px] lg:h-[800px] overflow-scroll"
             title="Pixlr Editor"
+            allow="fullscreen; clipboard-write; encrypted-media;"
+            sandbox="allow-scripts allow-same-origin"
+            onLoad={() => console.log('Iframe loaded successfully')}
             style={{ overflow: 'auto' }}
           ></iframe>
         </div>
