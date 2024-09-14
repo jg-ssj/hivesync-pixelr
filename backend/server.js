@@ -1,16 +1,14 @@
-import dotenv from 'dotenv'; 
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import { generateJwtToken } from './jwtUtils.js'; 
+import { generateJwtToken } from './jwtUtils.js';
 
-dotenv.config(); 
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'https://hivesync-pixelr.vercel.app',
-}));
+app.use(cors());
 
 app.get('/api/get-token', (req, res) => {
   try {
