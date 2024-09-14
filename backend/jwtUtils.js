@@ -7,9 +7,13 @@ export function generateJwtToken() {
     origin: 'https://hivesync-pixelr.vercel.app', 
   };
 
+  console.log('Generating JWT with payload:', payload);
+
   const token = jwt.sign(payload, process.env.CLIENT_SECRET, {
     algorithm: 'HS256',
   });
+
+  console.log('Generated token:', token);
 
   return token;
 }

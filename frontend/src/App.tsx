@@ -14,8 +14,13 @@ export default function Component() {
 
   const fetchJwtToken = async () => {
     try {
+      console.log('Fetching JWT token from:', API_URL);
       const response = await fetch(API_URL); 
+      if (!response.ok) {
+        throw new Error(`Server responded with status ${response.status}`);
+      }
       const data = await response.json();
+      console.log('Received JWT token:', data.token);
       return data.token;
     } catch (error) {
       console.error('Error al obtener el token:', error);
@@ -26,8 +31,12 @@ export default function Component() {
     const initializeEditor = async () => {
       const token = await fetchJwtToken();
       if (token && iframeRef.current) {
-        const connectedEditor = await Editor.connect(token, iframeRef.current);
-        setEditor(connectedEditor);
+        try {
+          const connectedEditor = await Editor.connect(token, iframeRef.current);
+          setEditor(connectedEditor);
+        } catch (error) {
+          console.error('Error connecting to Pixlr Editor:', error);
+        }
       }
     };
 

@@ -14,8 +14,10 @@ app.use(cors({
 
 app.get('/api/get-token', (req, res) => {
   try {
+    console.log('Request received for token generation');
     const token = generateJwtToken();
     res.json({ token });
+    console.log('Token sent successfully');
   } catch (error) {
     console.error('Error al generar el token:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
