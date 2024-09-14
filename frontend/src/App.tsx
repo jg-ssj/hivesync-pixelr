@@ -96,7 +96,7 @@ export default function Component() {
           <iframe
             ref={iframeRef}
             id="pixlr-frame"
-            src="about:blank"
+            src="https://pixlr.com/editor"
             className="w-full h-[600px] sm:h-[700px] lg:h-[800px] overflow-scroll"
             title="Pixlr Editor"
             style={{ overflow: 'auto' }}
