@@ -24,9 +24,9 @@ export default function Component() {
       if (!response.ok) {
         throw new Error(`Server responded with status ${response.status}`);
       }
-      const token = await response.text(); // Leer el texto directamente, ya que es el token en texto plano
+      const token = await response.text();
       console.log('Received JWT token:', token);
-      return token; // Devuelve el token directamente
+      return token;
     } catch (error) {
       console.error('Error al obtener el token:', error);
     }
@@ -50,30 +50,6 @@ export default function Component() {
     };
 
     initializeEditor();
-
-    // Listener to handle messages from the iframe
-    const handleFileSave = (event) => {
-      // Check the origin to make sure it's from Pixlr
-      if (event.origin !== 'https://pixlr.com') return;
-
-      // Handle the data sent from the iframe
-      const { type, content, filename } = event.data;
-
-      if (type === 'saveFile') {
-        const blob = new Blob([content], { type: 'application/octet-stream' }); // Adjust MIME type as needed
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = filename || 'file.png';
-        link.click();
-      }
-    };
-
-    window.addEventListener('message', handleFileSave);
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      window.removeEventListener('message', handleFileSave);
-    };
   }, []);
 
   return (
@@ -121,7 +97,7 @@ export default function Component() {
           <iframe
             ref={iframeRef}
             id="pixlr-frame"
-            src="https://pixlr.com/editor"
+            src={`https://pixlr.com/editor/?token=${fetchJwtToken()}`} // Genera la URL con el JWT
             className="w-full h-[600px] sm:h-[700px] lg:h-[800px] overflow-scroll"
             title="Pixlr Editor"
             allow="fullscreen; clipboard-write; encrypted-media;"

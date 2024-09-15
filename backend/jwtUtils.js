@@ -3,8 +3,9 @@ import jwt from 'jsonwebtoken';
 export function generateJwtToken() {
   const payload = {
     sub: process.env.CLIENT_KEY,
-    mode: 'embedded',
-    origin: 'https://hivesync-pixelr.vercel.app', 
+    mode: 'http', // Cambiado a 'http' para el modo de operación correcto
+    openUrl: 'https://yourdomain.com/image.png', // URL de la imagen que Pixlr abrirá inicialmente
+    saveUrl: 'https://yourdomain.com/save-image', // URL donde Pixlr enviará la imagen guardada
   };
 
   console.log('Generating JWT with payload:', payload);
